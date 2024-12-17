@@ -10,6 +10,8 @@ dotenv.config();
 /***********************************************************************************************
 Please deploy the stacks in the following order:
 1. ECR stack - then take the manual step as described in README.md
+2. Buy a domain name on AWS Route53 before deploying ECS Stack
+3. Deploy the EcsStack
 ************************************************************************************************/
 
 
