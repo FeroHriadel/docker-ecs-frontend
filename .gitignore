@@ -39,3 +39,13 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# aws cdk deployment
+/deployment/node_modules
+/deployment/.env
+/deployment/*.js
+/deployment/!jest.config.js
+/deployment/*.d.ts
+/deployment/node_modules
+/deployment/.cdk.staging
+/deployment/cdk.out
+
