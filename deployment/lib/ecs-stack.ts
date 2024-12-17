@@ -13,6 +13,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import * as targets from 'aws-cdk-lib/aws-route53-targets';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -37,11 +38,12 @@ export class EcsStack extends cdk.Stack {
   private ecsCluster: ecs.Cluster;
   private taskDefinition: ecs.FargateTaskDefinition;
   private container: cdk.aws_ecs.ContainerDefinition;
+  private hostedZone: cdk.aws_route53.IHostedZone;
   private certificate: acm.ICertificate;
   private alb: elb.ApplicationLoadBalancer;
   private fargateService: ecs.FargateService;
   private targetGroup: elb.ApplicationTargetGroup;
-  private albListener: cdk.aws_elasticloadbalancingv2.ApplicationListener
+  private albListener: cdk.aws_elasticloadbalancingv2.ApplicationListener;
 
 
   constructor(scope: Construct, id: string, props?: EcsStackProps) {
@@ -64,6 +66,7 @@ export class EcsStack extends cdk.Stack {
     this.createEcsService();
     this.createTargetGroup();
     this.createListener();
+    this.createDnsRecord();
   }
 
   private createVpc() {
@@ -125,12 +128,12 @@ export class EcsStack extends cdk.Stack {
   }
 
   private createCertificate() {
-    const hostedZone = route53.HostedZone.fromLookup(this, 'NextJsHostedZone', {
+    this.hostedZone = route53.HostedZone.fromLookup(this, 'NextJsHostedZone', {
       domainName: domainName
     });
     this.certificate = new acm.Certificate(this, 'NextJsCertificate', {
       domainName: domainName,
-      validation: acm.CertificateValidation.fromDns(hostedZone),
+      validation: acm.CertificateValidation.fromDns(this.hostedZone),
     });
   }
 
@@ -174,8 +177,8 @@ export class EcsStack extends cdk.Stack {
     });
   }
 
-  private createTargetGroup(): elb.ApplicationTargetGroup {
-    return new elb.ApplicationTargetGroup(this, 'NextJsTargetGroup', {
+  private createTargetGroup() {
+    this.targetGroup = new elb.ApplicationTargetGroup(this, 'NextJsTargetGroup', {
       vpc: this.vpc,
       port: 3000,
       targets: [this.fargateService],
@@ -187,6 +190,7 @@ export class EcsStack extends cdk.Stack {
         healthyThresholdCount: 2, //how many checks before instance is considered healthy
         unhealthyThresholdCount: 2 //how many checks before instance is considered unhealthy
       },
+      deregistrationDelay: cdk.Duration.seconds(30), //if container shuts down, people can finish form submissions, etc...
     });
   }
 
@@ -194,7 +198,25 @@ export class EcsStack extends cdk.Stack {
     this.albListener = this.alb.addListener('HttpsListener', {
       port: 443,
       certificates: [this.certificate],
-      defaultAction: elb.ListenerAction.forward([this.createTargetGroup()])
+      defaultAction: elb.ListenerAction.forward([this.targetGroup])
+    });
+    this.alb.addListener('HttpListener', { //redirect http to https
+      port: 80,
+      defaultAction: elb.ListenerAction.redirect({
+        protocol: 'HTTPS',
+        port: '443',
+        permanent: true
+      })
+    });
+  }
+
+  private createDnsRecord() { // Connect domain name to load balancer - when users type yourdomain.com, send them to the app
+    new route53.ARecord(this, 'NextJsAliasRecord', {
+      zone: this.hostedZone,
+      target: route53.RecordTarget.fromAlias(
+        new targets.LoadBalancerTarget(this.alb)
+      ),
+      recordName: domainName
     });
   }
 
