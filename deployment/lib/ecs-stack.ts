@@ -181,6 +181,7 @@ export class EcsStack extends cdk.Stack {
     this.targetGroup = new elb.ApplicationTargetGroup(this, 'NextJsTargetGroup', {
       vpc: this.vpc,
       port: 3000,
+      protocol: elb.ApplicationProtocol.HTTP,
       targets: [this.fargateService],
       healthCheck: {
         path: '/api/health',
