@@ -19,6 +19,11 @@
 AWS_REGION=us-east-1 
 AWS_ACCOUNT=333243953765
 NEXT_PUBLIC_API_ENDPOINT=https://backendEndpoint
+DOMAIN_NAME=tripiask.com
+GITHUB_TOKEN_SECRET_ARN=arn:aws:secretsmanager:us-east-1:478883603693:secret:github-token-W7JCX1X
+GITHUB_OWNER=FeroHriadel
+GITHUB_REPO=docker-ecs-frontend
+GITHUB_BRANCH=main
 ```
 
 <br />
@@ -39,4 +44,6 @@ It's easy to do:
 
 
 ### ECS Deployment
-
+Before deploying the ECS Stack a domain name must be purchased on AWS Route53.
+- go to AWS Route 53 and buy a domain name. Then put it to .env like: `DOMAIN_NAME=tripiask.com`
+- $ `cdk deploy NextJsEcsStack --profile fhyahoo`
