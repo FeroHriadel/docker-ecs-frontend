@@ -100,7 +100,7 @@ export class EcsStack extends cdk.Stack {
   }
 
   private createTaskDefinition() {
-    this.taskDefinition = new ecs.FargateTaskDefinition(this, 'NodeJsTask', {
+    this.taskDefinition = new ecs.FargateTaskDefinition(this, 'NextJsTask', {
       memoryLimitMiB: 512, //might need more - nextjs is resource intensive, will see.
       cpu: 256,
     });
