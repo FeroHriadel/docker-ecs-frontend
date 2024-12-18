@@ -1,7 +1,10 @@
 # DOCKER-ECS-FRONTEND
 
+Dockerized NextJS app for backend: https://github.com/FeroHriadel/docker-ecs-backend
+Includes IaC deployment to AWS ECS and CICD
 
-## ENVIRONMENT VARIABLES
+
+### ENVIRONMENT VARIABLES
 - make sure to add `/.env` with:
 
 ```
@@ -11,7 +14,7 @@ NEXT_PUBLIC_API_ENDPOINT = http://localhost:80/api
 <br />
 
 
-## BACKEND FOR FRONTEND DEVELOPMENT
+### BACKEND FOR FRONTEND DEVELOPMENT
 - pull backend from github (docker-ecs-backend)
 - $ `cd docker-ecs-backend/backend`
 - $ `docker-compose up -d` (will launch mysql db and nodejs api on localhost:80)
@@ -22,5 +25,5 @@ NEXT_PUBLIC_API_ENDPOINT = http://localhost:80/api
 <br />
 
 
-## DEPLOYMENT
+### DEPLOYMENT
 - please see `/deployment/README.md on detailed instructions

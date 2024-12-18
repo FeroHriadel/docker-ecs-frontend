@@ -67,7 +67,7 @@ const HomePage = () => {
 
   return (
     <div className='w-[100%] flex flex-col items-center gap-4 mt-20 max-w-[1000px] m-auto'>
-      <h1 className='text-3xl text-center mb-20'>Docker Test Frontend</h1>
+      <h1 className='text-3xl text-center mb-20'>Docker Test Frontend v2</h1>
 
       {error && <p className='text-red-500'>{error}</p>}
 

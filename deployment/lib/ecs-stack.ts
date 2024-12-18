@@ -37,11 +37,11 @@ export class EcsStack extends cdk.Stack {
   private ecsSecurityGroup: ec2.SecurityGroup;
   private ecsCluster: ecs.Cluster;
   private taskDefinition: ecs.FargateTaskDefinition;
-  private container: cdk.aws_ecs.ContainerDefinition;
+  public container: cdk.aws_ecs.ContainerDefinition;
   private hostedZone: cdk.aws_route53.IHostedZone;
   private certificate: acm.ICertificate;
   private alb: elb.ApplicationLoadBalancer;
-  private fargateService: ecs.FargateService;
+  public fargateService: ecs.FargateService;
   private targetGroup: elb.ApplicationTargetGroup;
   private albListener: cdk.aws_elasticloadbalancingv2.ApplicationListener;
 
